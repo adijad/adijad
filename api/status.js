@@ -10,9 +10,9 @@ const GITHUB_USERNAME = "adijad";
 const ACTIVE_WINDOW_HOURS = 24; // "recently committed" = within this many hours
 
 const WORKING_GIF =
-  "https://raw.githubusercontent.com/adijad/adijad/main/assets/working_combo_1.gif";
+  "https://raw.githubusercontent.com/adijad/adijad/main/assets/working_combo.webp";
 const RESTING_GIF =
-  "https://raw.githubusercontent.com/adijad/adijad/main/assets/resting_combo_1.gif";
+  "https://raw.githubusercontent.com/adijad/adijad/main/assets/resting_combo.webp";
 
 export default async function handler(req, res) {
   try {
