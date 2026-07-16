@@ -1,0 +1,42 @@
+name: Update live status image
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"   # every 15 minutes
+  workflow_dispatch: {}        # lets you trigger it manually from the Actions tab, for testing
+
+permissions:
+  contents: write
+
+jobs:
+  update-status:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Decide which file should be "live" right now
+        id: decide
+        run: |
+          # --- TEST MODE ---
+          # For this pilot, we're just proving the pipeline end-to-end,
+          # so we hardcode picking the one large file you already have.
+          # Once confirmed working, this gets replaced with a real commit-history check.
+          SOURCE_FILE="assets/resting_combo_1.gif"
+          echo "source_file=$SOURCE_FILE" >> "$GITHUB_OUTPUT"
+
+      - name: Copy chosen file to the fixed "live" filename
+        run: |
+          cp "${{ steps.decide.outputs.source_file }}" assets/live_status.gif
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add assets/live_status.gif
+          if git diff --cached --quiet; then
+            echo "No change, skipping commit."
+          else
+            git commit -m "Update live status image [automated]"
+            git push
+          fi
