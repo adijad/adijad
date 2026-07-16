@@ -3,7 +3,7 @@ name: Update live status image
 on:
   schedule:
     - cron: "*/15 * * * *"   # every 15 minutes
-  workflow_dispatch: {}        # lets you trigger it manually from the Actions tab, for testing
+  workflow_dispatch: {}        # lets you trigger it manually from the Actions tab
 
 permissions:
   contents: write
@@ -15,25 +15,44 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Decide which file should be "live" right now
+      - name: Check recent commit activity and decide which reel to use
         id: decide
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # --- TEST MODE ---
-          # For this pilot, we're just proving the pipeline end-to-end,
-          # so we hardcode picking the one large file you already have.
-          # Once confirmed working, this gets replaced with a real commit-history check.
-          SOURCE_FILE="assets/resting_combo_1.gif"
-          echo "source_file=$SOURCE_FILE" >> "$GITHUB_OUTPUT"
+          USERNAME="adijad"
+          WINDOW_HOURS=24
 
-      - name: Copy chosen file to the fixed "live" filename
+          # Pull the user's recent public events
+          EVENTS=$(curl -s -H "Authorization: Bearer $GH_TOKEN" \
+                        -H "Accept: application/vnd.github+json" \
+                        "https://api.github.com/users/${USERNAME}/events/public?per_page=30")
+
+          # Cutoff timestamp (ISO 8601, WINDOW_HOURS ago)
+          CUTOFF=$(date -u -d "-${WINDOW_HOURS} hours" +%Y-%m-%dT%H:%M:%SZ)
+
+          # Check if any PushEvent happened after the cutoff
+          HAS_RECENT_PUSH=$(echo "$EVENTS" | jq -r --arg cutoff "$CUTOFF" '
+            [.[] | select(.type == "PushEvent") | select(.created_at > $cutoff)] | length > 0
+          ')
+
+          if [ "$HAS_RECENT_PUSH" = "true" ]; then
+            echo "source_file=assets/working_reel_hq.webp" >> "$GITHUB_OUTPUT"
+            echo "Decision: WORKING (recent commit found)"
+          else
+            echo "source_file=assets/resting_reel_hq.webp" >> "$GITHUB_OUTPUT"
+            echo "Decision: RESTING (no recent commit)"
+          fi
+
+      - name: Copy chosen reel to the fixed "live" filename
         run: |
-          cp "${{ steps.decide.outputs.source_file }}" assets/live_status.gif
+          cp "${{ steps.decide.outputs.source_file }}" assets/live_status.webp
 
       - name: Commit and push if changed
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add assets/live_status.gif
+          git add assets/live_status.webp
           if git diff --cached --quiet; then
             echo "No change, skipping commit."
           else
