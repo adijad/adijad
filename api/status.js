@@ -11,9 +11,9 @@ const ACTIVE_WINDOW_HOURS = 24; // "recently committed" = within this many hours
 
 const WORKING_GIF =
   // "https://raw.githubusercontent.com/adijad/adijad/main/assets/working_combo.webp";
-  "https://raw.githubusercontent.com/adijad/adijad/main/assets/working_reel_hq.webp";
+  "https://raw.githubusercontent.com/adijad/adijad/main/assets/working_reel_full.webp";
 const RESTING_GIF =
-  "https://raw.githubusercontent.com/adijad/adijad/main/assets/resting_reel_hq.webp";
+  "https://raw.githubusercontent.com/adijad/adijad/main/assets/resting_reel_full.webp";
 
 export default async function handler(req, res) {
   try {
