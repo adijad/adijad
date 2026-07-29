@@ -49,13 +49,21 @@ jobs:
           cp "${{ steps.decide.outputs.source_file }}" assets/live_status.webp
 
       - name: Commit and push if changed
+        id: commit
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add assets/live_status.webp
           if git diff --cached --quiet; then
             echo "No change, skipping commit."
+            echo "changed=false" >> "$GITHUB_OUTPUT"
           else
             git commit -m "Update live status image [automated]"
             git push
+            echo "changed=true" >> "$GITHUB_OUTPUT"
           fi
+
+      - name: Purge jsDelivr cache so the CDN picks up the new file
+        if: steps.commit.outputs.changed == 'true'
+        run: |
+          curl -s "https://purge.jsdelivr.net/gh/adijad/adijad@main/assets/live_status.webp"
