@@ -37,10 +37,10 @@ jobs:
           ')
 
           if [ "$HAS_RECENT_PUSH" = "true" ]; then
-            echo "source_file=assets/working_reel_hq.webp" >> "$GITHUB_OUTPUT"
+            echo "source_file=assets/working_reel_full.webp" >> "$GITHUB_OUTPUT"
             echo "Decision: WORKING (recent commit found)"
           else
-            echo "source_file=assets/resting_reel_hq.webp" >> "$GITHUB_OUTPUT"
+            echo "source_file=assets/resting_reel_full.webp" >> "$GITHUB_OUTPUT"
             echo "Decision: RESTING (no recent commit)"
           fi
 
