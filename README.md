@@ -10,7 +10,7 @@
 <!-- <img src="https://raw.githubusercontent.com/adijad/adijad/main/assets/resting_combo_1.gif" width="90%" /> -->
 <!-- <img src="https://raw.githubusercontent.com/adijad/adijad/main/assets/live_status.gif" width="90%" /> -->
 <!-- <img src="https://cdn.jsdelivr.net/gh/adijad/adijad@main/assets/live_status.webp" width="90%" /> -->
-<img src="https://adijad.github.io/assets/live_status.webp" width="90%" />
+<img src="https://adijad.github.io/adijad/assets/live_status.webp" width="90%" />
 <sub>This updates automatically based on my real GitHub commit activity — reload to check in.</sub>
 
 </div>
